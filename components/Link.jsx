@@ -34,7 +34,6 @@ function Link() {
     const [showCountrySuggestions, setShowCountrySuggestions] = useState(false);
     const [userInputMessage, setUserInputMessage] = useState('');
     const [userInputCountry, setUserInputCountry] = useState('');
-    // Новые состояния для формы и уведомления
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [isSent, setIsSent] = useState(false);
@@ -196,7 +195,6 @@ function Link() {
             setErrorMessage('Пожалуйста, заполните все поля.');
             return;
         }
-        // Сохраняем данные в локальное хранилище
         localStorage.setItem('contactFormData', JSON.stringify({
             name,
             email,
@@ -204,11 +202,9 @@ function Link() {
             message: userInputMessage
         }));
 
-        // Выводим оповещение
         setIsSent(true);
         setErrorMessage('');
 
-        // Сбрасываем форму и уведомление через 3 секунды
         setTimeout(() => {
             setIsSent(false);
             setName('');

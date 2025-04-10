@@ -21,7 +21,7 @@ function Link() {
     const [messages, setMessages] = useState(['Здравствуйте, мы хотим с вами сотрудничать.', 'Здравствуйте, мы хотим пользоваться вашим проектом.', 'Здравствуйте, мы хотим поддержать развитие вашего стартапа.', 'Здравствуйте, мы хотим заняться спонсорством вашей идеи.']);
     const [countries, setCountries] = useState(['Беларусь', 'Россия', 'Украина', 'Казахстан', 'Соединенные Штаты Америки', 'Чехия', 'Польша', 'Китай', 'Япония']);
     const [isResizing, setIsResizing] = useState(false);
-    const [initialHeight, setInitialHeight] = useState(200); // Provide a default value
+    const [initialHeight, setInitialHeight] = useState(200);
     const [startY, setStartY] = useState(0);
     const [startHeight, setStartHeight] = useState(0);
     const textareaRef = useRef(null);
@@ -38,6 +38,7 @@ function Link() {
     const [email, setEmail] = useState('');
     const [isSent, setIsSent] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const emailRegex = /^[a-zA-Z0-9._%+-]{2,35}@(?:[a-zA-Z0-9-]{2,8}\.){1,}[a-zA-Z]{2,5}$/;
 
     useEffect(() => {
         const textarea = textareaRef.current;
@@ -106,7 +107,8 @@ function Link() {
     }, [initialHeight, isResizing, startHeight, startY]);
 
     const handleCountriesInputChange = (e) => {
-        const userInput = e.target.value;
+        let userInput = e.target.value;
+        userInput = trim(userInput);
         setUserInputCountry(userInput);
 
         const filteredSuggestions = countries.filter(
@@ -119,7 +121,8 @@ function Link() {
         setShowCountrySuggestions(true);
     };
     const handleMessagesInputChange = (e) => {
-        const userInput = e.target.value;
+        let userInput = e.target.value;
+        userInput = trim(userInput);
         setUserInputMessage(userInput);
         const filteredSuggestions = messages.filter(
             (suggestion) =>
@@ -182,24 +185,45 @@ function Link() {
     );
 
     const handleNameChange = (e) => {
-        setName(e.target.value);
+        let value = e.target.value;
+        value = trim(value);
+        setName(value);
     };
 
     const handleEmailChange = (e) => {
-        setEmail(e.target.value);
+        let value = e.target.value;
+        value = trim(value);
+        setEmail(value);
     };
+
+    const trim = (str) => {
+        return str.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ');
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!name || !email || !userInputCountry || !userInputMessage) {
+
+        const trimmedName = trim(name);
+        const trimmedEmail = trim(email);
+        const trimmedCountry = trim(userInputCountry);
+        const trimmedMessage = trim(userInputMessage);
+
+
+        if (!trimmedName || !trimmedEmail || !trimmedCountry || !trimmedMessage) {
             setErrorMessage('Пожалуйста, заполните все поля.');
             return;
         }
+
+        if (!emailRegex.test(trimmedEmail)) {
+            setErrorMessage('Введите реальную почту');
+            return;
+        }
+
         localStorage.setItem('contactFormData', JSON.stringify({
-            name,
-            email,
-            country: userInputCountry,
-            message: userInputMessage
+            name: trimmedName,
+            email: trimmedEmail,
+            country: trimmedCountry,
+            message: trimmedMessage
         }));
 
         setIsSent(true);
@@ -336,78 +360,73 @@ function Link() {
                                 <img src={tick} alt="check" />
                                 <span>Access to GPM.Travel for your first night up to 70% off</span>
                             </li>
-                            <li className="feature-active">
-                                <img src={tick} alt="check" />
+                            <li className="feature-inactive">
+                                <img src={cross} alt="cross" />
                                 <span>Unblock all the Premium features</span>
                             </li>
-                            <li className="feature-active">
-                                <img src={tick} alt="check" />
+                            <li className="feature-inactive">
+                                <img src={cross} alt="cross" />
                                 <span>Double your savings, access to GPM.Mall over 100,000 products up to 70% off</span>
                             </li>
-                            <li className="feature-active">
-                                <img src={tick} alt="check" />
+                            <li className="feature-inactive">
+                                <img src={cross} alt="cross" />
                                 <span>Unblock 4 additional Profiles</span>
                             </li>
                         </ul>
-                        <div className="price">$ 9.99</div>
+                        <div className="price">FREE</div>
                     </div>
                 </div>
             </section>
+
             <section className="contact-section">
-                <h1>Contact us</h1>
-                <form className="contact-form" onSubmit={handleSubmit}>
-                    <input
-                        maxLength="40"
-                        type="text"
-                        placeholder="Ваше имя/компания"
-                        className="form-input"
-                        value={name}
-                        onChange={handleNameChange}
-                        required
-                    />
-
-                    <input
-                        maxLength="50"
-                        type="email"
-                        placeholder="Ваша почта"
-                        className="form-input"
-                        value={email}
-                        onChange={handleEmailChange}
-                        required
-                    />
-                    <div className="autocomplete" ref={countriesInputRef}>
+                <div className="form-container">
+                    <h1>Свяжитесь с нами</h1>
+                    {isSent && <p className="success-message">Сообщение успешно отправлено!</p>}
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
+                    <form className="contact-form" onSubmit={handleSubmit}>
                         <input
-                            maxLength="50"
+                            maxlength="70"
                             type="text"
-                            placeholder="Откуда вы"
+                            placeholder="Ваше имя/компания"
                             className="form-input"
-                            id="countries"
-                            onChange={handleCountriesInputChange}
-                            value={userInputCountry}
-                            required
+                            value={name}
+                            onChange={handleNameChange}
                         />
-                        {suggestionsListComponentCountries}
-                    </div>
-                    <div className="autocomplete" ref={messagesInputRef}>
-                        <textarea
-                            maxLength="300"
-                            placeholder="Ваше сообщение"
-                            className="form-input message"
-                            id="myInput"
-                            ref={textareaRef}
-                            onChange={handleMessagesInputChange}
-                            value={userInputMessage}
-                            style={{minHeight: initialHeight + 'px'}}
-                            required
+                        <input
+                            maxlength="50"
+                            type="text"
+                            placeholder="Ваша почта"
+                            className="form-input"
+                            value={email}
+                            onChange={handleEmailChange}
                         />
-                        {suggestionsListComponentMessages}
-                    </div>
-
-                    <button type="submit" className="mainBtn">Submit</button>
-                    {errorMessage && <div className="alert-error">{errorMessage}</div>}
-                    {isSent && <div className="alert-success">Сообщение отправлено успешно!</div>}
-                </form>
-
+                        <div className="autocomplete" ref={countriesInputRef}>
+                            <input
+                                maxlength="50"
+                                type="text"
+                                placeholder="Откуда вы"
+                                className="form-input"
+                                id="countries"
+                                value={userInputCountry}
+                                onChange={handleCountriesInputChange}
+                            />
+                            {suggestionsListComponentCountries}
+                        </div>
+                        <div className="autocomplete" ref={messagesInputRef}>
+                            <textarea
+                                maxlength="1200"
+                                placeholder="Ваше сообщение"
+                                className="form-input message"
+                                id="myInput"
+                                value={userInputMessage}
+                                onChange={handleMessagesInputChange}
+                                ref={textareaRef}
+                            ></textarea>
+                            {suggestionsListComponentMessages}
+                        </div>
+                        <button type="submit" className="mainBtn">Submit</button>
+                    </form>
+                </div>
             </section>
         </main>
     );

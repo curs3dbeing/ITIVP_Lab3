@@ -494,6 +494,16 @@ html, body {
     border-bottom: 1px solid #d4d4d4;
 }
 
+.error-message {
+    color: red;
+    margin-bottom: 30px;
+}
+
+.success-message {
+    color: green;
+    margin-bottom: 30px;
+}
+
 .suggestions li:hover,
 .suggestions li.suggestion-active {
     background-color: #e9e9e9;

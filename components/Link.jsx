@@ -108,7 +108,7 @@ function Link() {
 
     const handleCountriesInputChange = (e) => {
         let userInput = e.target.value;
-        userInput = trim(userInput);
+        userInput = userInput.trimStart();
         setUserInputCountry(userInput);
 
         const filteredSuggestions = countries.filter(
@@ -122,7 +122,7 @@ function Link() {
     };
     const handleMessagesInputChange = (e) => {
         let userInput = e.target.value;
-        userInput = trim(userInput);
+        userInput = userInput.trimStart();
         setUserInputMessage(userInput);
         const filteredSuggestions = messages.filter(
             (suggestion) =>
@@ -186,13 +186,13 @@ function Link() {
 
     const handleNameChange = (e) => {
         let value = e.target.value;
-        value = trim(value);
+        value = value.trimStart();
         setName(value);
     };
 
     const handleEmailChange = (e) => {
         let value = e.target.value;
-        value = trim(value);
+        value = value.trimStart();
         setEmail(value);
     };
 
@@ -381,8 +381,6 @@ function Link() {
             <section className="contact-section">
                 <div className="form-container">
                     <h1>Свяжитесь с нами</h1>
-                    {isSent && <p className="success-message">Сообщение успешно отправлено!</p>}
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
                     <form className="contact-form" onSubmit={handleSubmit}>
                         <input
                             maxlength="70"
@@ -426,6 +424,8 @@ function Link() {
                         </div>
                         <button type="submit" className="mainBtn">Submit</button>
                     </form>
+                    {isSent && <p className="success-message">Сообщение успешно отправлено!</p>}
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
                 </div>
             </section>
         </main>

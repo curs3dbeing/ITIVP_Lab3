@@ -98,7 +98,7 @@ function SecondMainSection() {
             Присоединяйтесь!
           </span>
                     <div className={styles.inputButtonSection}>
-                        <input disabled aria-label="" placeholder="Ваша почта" type="email"
+                        <input maxLength="35" aria-label="" placeholder="Ваша почта" type="email"
                                className={styles.emailTeamInput}/>
                         <button className={styles.submitBtn}>Отправить</button>
                     </div>

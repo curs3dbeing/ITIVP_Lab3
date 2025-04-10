@@ -496,12 +496,12 @@ html, body {
 
 .error-message {
     color: red;
-    margin-bottom: 30px;
+    margin-top: 30px;
 }
 
 .success-message {
     color: green;
-    margin-bottom: 30px;
+    margin-top: 30px;
 }
 
 .suggestions li:hover,

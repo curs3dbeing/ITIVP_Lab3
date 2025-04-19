@@ -16,6 +16,7 @@ import rightTreesMobile from '../components/images/rightTreesMobile.png';
 import phone2 from '../components/images/phone2.png';
 import tick from '../components/images/tick.svg';
 import cross from '../components/images/cross.svg';
+import {data} from "autoprefixer";
 
 function Link() {
     const [messages, setMessages] = useState(['Здравствуйте, мы хотим с вами сотрудничать.', 'Здравствуйте, мы хотим пользоваться вашим проектом.', 'Здравствуйте, мы хотим поддержать развитие вашего стартапа.', 'Здравствуйте, мы хотим заняться спонсорством вашей идеи.']);
@@ -128,7 +129,6 @@ function Link() {
             (suggestion) =>
                 suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
         );
-
         setActiveSuggestion(0);
         setFilteredSuggestionsMessages(filteredSuggestions);
         setShowMessageSuggestions(true);
@@ -200,6 +200,41 @@ function Link() {
         return str.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ');
     }
 
+    const checkEmailExists = (email) => {
+        const items = localStorage.getItem('messages');
+
+        const messagesArray = items ? JSON.parse(items) : [];
+
+        if (!Array.isArray(messagesArray)) {
+            console.error('Данные в localStorage не являются массивом');
+            return true;
+        }
+
+        for (let i = 0; i < messagesArray.length; i++) {
+            const messageObject = JSON.parse(messagesArray[i].message);
+            if (messageObject.email === email) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    function addMessage(name, message) {
+        const key = 'messages';
+
+        let messages = localStorage.getItem(key);
+
+        if (messages) {
+            messages = JSON.parse(messages);
+        } else {
+            messages = [];
+        }
+
+        messages.push({ name, message });
+        localStorage.setItem(key, JSON.stringify(messages));
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -208,6 +243,10 @@ function Link() {
         const trimmedCountry = trim(userInputCountry);
         const trimmedMessage = trim(userInputMessage);
 
+        if (!checkEmailExists(trimmedEmail)) {
+            setErrorMessage('От данного адреса электронной почты уже существует письмо')
+            return;
+        }
 
         if (!trimmedName || !trimmedEmail || !trimmedCountry || !trimmedMessage) {
             setErrorMessage('Пожалуйста, заполните все поля.');
@@ -219,12 +258,19 @@ function Link() {
             return;
         }
 
-        localStorage.setItem('contactFormData', JSON.stringify({
+        addMessage('contactFromData', JSON.stringify({
             name: trimmedName,
             email: trimmedEmail,
             country: trimmedCountry,
             message: trimmedMessage
         }));
+        /*
+        localStorage.setItem('contactFormData', JSON.stringify({
+            name: trimmedName,
+            email: trimmedEmail,
+            country: trimmedCountry,
+            message: trimmedMessage
+        }));*/
 
         setIsSent(true);
         setErrorMessage('');

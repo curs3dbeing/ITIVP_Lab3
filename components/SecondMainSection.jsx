@@ -6,11 +6,11 @@ import web_design from '../components/images/web-design.svg'
 import styles from '../components/TeamResponsible.module.css';
 import team_photo1 from '../components/images/team_photo 1.jpg'
 import team_photo2 from '../components/images/team_photo 2.jpg'
-
+import team_photo3 from '../components/images/team_photo 3.jpg'
 
 function SecondMainSection() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const images = [ team_photo1,  team_photo2];
+    const images = [ team_photo1,  team_photo2, team_photo3];
     const intervalRef = useRef(null);
 
     const resetInterval = () => {
@@ -18,6 +18,11 @@ function SecondMainSection() {
         intervalRef.current = setInterval(() => {
             setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
         }, 3000);
+    };
+
+    const handleImageClick = (index) => {
+        resetInterval();
+        setCurrentImageIndex(index);
     };
 
     useEffect(() => {
@@ -67,6 +72,17 @@ function SecondMainSection() {
                 <button className={styles.arrowBtn} onClick={handleNextClick}>
                     →
                 </button>
+            </div>
+            <div className={styles.buttonContainer}>
+                {images.map((image, index) => (
+                    <button
+                        key={index}
+                        className={`${styles.imageBtn} ${currentImageIndex === index ? styles.active : ''}`}
+                        onClick={() => handleImageClick(index)}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
             </div>
             <section className="ourTeam">
                 <div className={styles.teamContainer}>
